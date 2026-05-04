@@ -1,8 +1,8 @@
 import { Heart, LoaderCircle } from 'lucide-react';
-import type { Dispatch, SetStateAction} from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
-import { toggleLikedStatus } from '../queries';
-import type { Puppy } from '../types';
+import { toggleLikedStatus } from '@/queries';
+import type { Puppy } from '@/types';
 
 export function LikeToggle({
     puppy,

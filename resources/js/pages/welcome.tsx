@@ -17,6 +17,7 @@ export default function App({ puppies }: { puppies: Puppy[] }) {
         <PageWrapper>
             <Container>
                 <Header />
+                <pre>{JSON.stringify(puppies, null, 2)}</pre>
                 <ul className="mt-4 flex flex-wrap gap-4">
                     {puppies.map((puppy) => (
                         <li
