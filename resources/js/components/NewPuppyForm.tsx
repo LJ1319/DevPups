@@ -1,8 +1,8 @@
 import type { Dispatch, SetStateAction } from 'react';
 import { useFormStatus } from 'react-dom';
 import { ErrorBoundary } from 'react-error-boundary';
-import { createPuppy } from '../queries';
-import type { Puppy } from '../types';
+import { createPuppy } from '@/queries';
+import type { Puppy } from '@/types';
 
 export function NewPuppyForm({
     puppies,

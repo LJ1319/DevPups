@@ -5,7 +5,7 @@ export function Header() {
             <a className="group" href="/">
                 <div className="inline-flex items-center gap-4">
                     <img
-                        src="/images/pixel-logo.png"
+                        src="/images/logo.png"
                         alt="DevPups"
                         className="h-16 transition group-hover:scale-105 group-hover:-rotate-6 md:h-20"
                     />
