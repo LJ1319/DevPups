@@ -1,3 +1,4 @@
+import { usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { Container } from '@/components/Container';
 import { Header } from '@/components/Header';
@@ -20,6 +21,8 @@ export default function App({ puppies }: { puppies: Puppy[] }) {
 }
 
 function Main({ pups }: { pups: Puppy[] }) {
+    const { auth } = usePage().props;
+
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [puppies, setPuppies] = useState<Puppy[]>(pups);
 
@@ -30,7 +33,9 @@ function Main({ pups }: { pups: Puppy[] }) {
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                 />
-                <Shortlist puppies={puppies} setPuppies={setPuppies} />
+                {auth.user && (
+                    <Shortlist puppies={puppies} setPuppies={setPuppies} />
+                )}
             </div>
             <PuppiesList
                 puppies={puppies}
