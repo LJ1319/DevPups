@@ -21,7 +21,8 @@ class PuppyController extends Controller
                     ->orWhere('trait', 'like', '%'.$search.'%')
             )
             ->with(['user', 'likedBy'])
-            ->get();
+            ->paginate(9)
+            ->withQueryString();
 
         return Inertia::render('puppies/index', [
             'puppies' => PuppyResource::collection($puppies),
