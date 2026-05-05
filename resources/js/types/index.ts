@@ -12,3 +12,8 @@ export type Puppy = {
     user: Pick<User, 'id' | 'name'>;
     likedBy: User['id'][];
 };
+
+export type Filters = {
+    search?: string;
+    [key: string]: unknown;
+};

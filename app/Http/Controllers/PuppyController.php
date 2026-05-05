@@ -11,10 +11,23 @@ use Inertia\Response;
 
 class PuppyController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $search = $request->search;
+
+        $puppies = Puppy::query()
+            ->when($request->has('search'),
+                fn ($query) => $query->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('trait', 'like', '%'.$search.'%')
+            )
+            ->with(['user', 'likedBy'])
+            ->get();
+
         return Inertia::render('puppies/index', [
-            'puppies' => PuppyResource::collection(Puppy::all()->load(['user', 'likedBy'])),
+            'puppies' => PuppyResource::collection($puppies),
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 
