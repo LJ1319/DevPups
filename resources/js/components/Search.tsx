@@ -1,4 +1,5 @@
 import { router } from '@inertiajs/react';
+import { debounce } from 'lodash-es';
 import { Delete } from 'lucide-react';
 import { useRef } from 'react';
 import { route } from 'ziggy-js';
@@ -12,6 +13,21 @@ export function Search({ filters }: { filters: Filters }) {
             route('home'),
             { search: value },
             { preserveState: true, preserveScroll: true },
+        );
+    }
+
+    function handleClear() {
+        router.get(
+            route('home'),
+            { search: undefined },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: () => {
+                    inputRef.current!.value = '';
+                    inputRef.current?.focus();
+                },
+            },
         );
     }
 
@@ -29,12 +45,13 @@ export function Search({ filters }: { filters: Filters }) {
                     placeholder="playful..."
                     defaultValue={filters.search}
                     className="w-full max-w-80 bg-white px-4 py-2 ring ring-black/5 focus:ring-2 focus:ring-cyan-500 focus:outline-none"
-                    onChange={(e) => handleSearch(e.target.value)}
+                    onChange={debounce(
+                        (e) => handleSearch(e.target.value),
+                        300,
+                    )}
                 />
                 <button
-                    onClick={() => {
-                        inputRef.current?.focus();
-                    }}
+                    onClick={handleClear}
                     className="inline-block rounded bg-cyan-300 px-4 py-2 !pr-3 !pl-2.5 font-medium text-cyan-900 hover:bg-cyan-200 focus:ring-2 focus:ring-cyan-500 focus:outline-none"
                 >
                     <Delete />
