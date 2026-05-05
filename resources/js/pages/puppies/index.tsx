@@ -14,17 +14,15 @@ export default function App({ puppies }: { puppies: Puppy[] }) {
         <PageWrapper>
             <Container>
                 <Header />
-                <Main pups={puppies} />
+                <Main puppies={puppies} />
             </Container>
         </PageWrapper>
     );
 }
 
-function Main({ pups }: { pups: Puppy[] }) {
+function Main({ puppies }: { puppies: Puppy[] }) {
     const { auth } = usePage().props;
-
     const [searchQuery, setSearchQuery] = useState<string>('');
-    const [puppies, setPuppies] = useState<Puppy[]>(pups);
 
     return (
         <main>
@@ -33,16 +31,10 @@ function Main({ pups }: { pups: Puppy[] }) {
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                 />
-                {auth.user && (
-                    <Shortlist puppies={puppies} setPuppies={setPuppies} />
-                )}
+                {auth.user && <Shortlist puppies={puppies} />}
             </div>
-            <PuppiesList
-                puppies={puppies}
-                searchQuery={searchQuery}
-                setPuppies={setPuppies}
-            />
-            <NewPuppyForm puppies={puppies} setPuppies={setPuppies} />
+            <PuppiesList puppies={puppies} searchQuery={searchQuery} />
+            <NewPuppyForm puppies={puppies} />
         </main>
     );
 }

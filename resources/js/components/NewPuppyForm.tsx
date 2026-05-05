@@ -1,16 +1,9 @@
-import type { Dispatch, SetStateAction } from 'react';
 import { useFormStatus } from 'react-dom';
 import { ErrorBoundary } from 'react-error-boundary';
 import { createPuppy } from '@/queries';
 import type { Puppy } from '@/types';
 
-export function NewPuppyForm({
-    puppies,
-    setPuppies,
-}: {
-    puppies: Puppy[];
-    setPuppies: Dispatch<SetStateAction<Puppy[]>>;
-}) {
+export function NewPuppyForm({ puppies }: { puppies: Puppy[] }) {
     return (
         <div className="mt-12 flex items-center justify-between bg-white p-8 shadow ring ring-black/5">
             <ErrorBoundary
@@ -22,9 +15,9 @@ export function NewPuppyForm({
                     action={async (formData: FormData) => {
                         const response = await createPuppy(formData);
 
-                        if (response.data) {
-                            setPuppies([...puppies, response.data]);
-                        }
+                        // if (response.data) {
+                        //     setPuppies([...puppies, response.data]);
+                        // }
                     }}
                     className="mt-4 flex w-full flex-col items-start gap-4"
                 >

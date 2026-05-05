@@ -1,16 +1,13 @@
+import { Link, usePage } from '@inertiajs/react';
 import { Heart, LoaderCircle, X } from 'lucide-react';
-import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
-import { toggleLikedStatus } from '@/queries';
+import { route } from 'ziggy-js';
 import type { Puppy } from '@/types';
 
-export function Shortlist({
-    puppies,
-    setPuppies,
-}: {
-    puppies: Puppy[];
-    setPuppies: Dispatch<SetStateAction<Puppy[]>>;
-}) {
+export function Shortlist({ puppies }: { puppies: Puppy[] }) {
+    const { auth } = usePage().props;
+    const [pending, setPending] = useState(false);
+
     return (
         <div>
             <h2 className="flex items-center gap-2 font-medium">
@@ -19,7 +16,7 @@ export function Shortlist({
             </h2>
             <ul className="mt-4 flex flex-wrap gap-4">
                 {puppies
-                    .filter((pup) => pup.likedBy.includes(1))
+                    .filter((pup) => pup.likedBy.includes(auth.user?.id))
                     .map((puppy) => (
                         <li
                             key={puppy.id}
@@ -35,48 +32,22 @@ export function Shortlist({
                             <p className="px-3 text-sm text-slate-800">
                                 {puppy.name}
                             </p>
-                            <DeleteButton
-                                id={puppy.id}
-                                setPuppies={setPuppies}
-                            />
+                            <Link
+                                href={route('puppies.like', puppy.id)}
+                                method="patch"
+                                preserveScroll
+                                className="group h-full border-l border-slate-100 px-2 hover:bg-slate-100"
+                                disabled={pending}
+                            >
+                                {pending ? (
+                                    <LoaderCircle className="size-4 animate-spin stroke-slate-300" />
+                                ) : (
+                                    <X className="size-4 stroke-slate-400 group-hover:stroke-red-400" />
+                                )}
+                            </Link>
                         </li>
                     ))}
             </ul>
         </div>
-    );
-}
-
-function DeleteButton({
-    id,
-    setPuppies,
-}: {
-    id: Puppy['id'];
-    setPuppies: Dispatch<SetStateAction<Puppy[]>>;
-}) {
-    const [pending, setPending] = useState(false);
-
-    return (
-        <button
-            onClick={async () => {
-                setPending(true);
-                const updatedPuppy = await toggleLikedStatus(id);
-                setPuppies((prevPups) => {
-                    return prevPups.map((existingPuppy) =>
-                        existingPuppy.id === updatedPuppy.id
-                            ? updatedPuppy
-                            : existingPuppy,
-                    );
-                });
-                setPending(false);
-            }}
-            className="group h-full border-l border-slate-100 px-2 hover:bg-slate-100"
-            disabled={pending}
-        >
-            {pending ? (
-                <LoaderCircle className="size-4 animate-spin stroke-slate-300" />
-            ) : (
-                <X className="size-4 stroke-slate-400 group-hover:stroke-red-400" />
-            )}
-        </button>
     );
 }
