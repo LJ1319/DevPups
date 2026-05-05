@@ -1,12 +1,17 @@
-import { Link, usePage } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { Heart, LoaderCircle, X } from 'lucide-react';
-import { useState } from 'react';
 import { route } from 'ziggy-js';
 import type { Puppy } from '@/types';
 
 export function Shortlist({ puppies }: { puppies: Puppy[] }) {
     const { auth } = usePage().props;
-    const [pending, setPending] = useState(false);
+    const { processing, patch } = useForm();
+
+    function handleSubmit(id: number) {
+        patch(route('puppies.like', id), {
+            preserveScroll: true,
+        });
+    }
 
     return (
         <div>
@@ -32,19 +37,25 @@ export function Shortlist({ puppies }: { puppies: Puppy[] }) {
                             <p className="px-3 text-sm text-slate-800">
                                 {puppy.name}
                             </p>
-                            <Link
-                                href={route('puppies.like', puppy.id)}
-                                method="patch"
-                                preserveScroll
-                                className="group h-full border-l border-slate-100 px-2 hover:bg-slate-100"
-                                disabled={pending}
+                            <form
+                                className="h-full"
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    handleSubmit(puppy.id);
+                                }}
                             >
-                                {pending ? (
-                                    <LoaderCircle className="size-4 animate-spin stroke-slate-300" />
-                                ) : (
-                                    <X className="size-4 stroke-slate-400 group-hover:stroke-red-400" />
-                                )}
-                            </Link>
+                                <button
+                                    type="submit"
+                                    className="group h-full border-l border-slate-100 px-2 hover:bg-slate-100"
+                                    disabled={processing}
+                                >
+                                    {processing ? (
+                                        <LoaderCircle className="size-4 animate-spin stroke-slate-300" />
+                                    ) : (
+                                        <X className="size-4 stroke-slate-400 group-hover:stroke-red-400" />
+                                    )}
+                                </button>
+                            </form>
                         </li>
                     ))}
             </ul>
