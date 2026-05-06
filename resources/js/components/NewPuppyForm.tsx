@@ -53,7 +53,6 @@ export function NewPuppyForm({
                             name="name"
                             type="text"
                             value={data.name}
-                            required
                             onChange={(e) => setData('name', e.target.value)}
                             className="max-w-96 rounded-sm bg-white px-2 py-1 ring ring-black/20 focus:ring-2 focus:ring-cyan-500 focus:outline-none"
                         />
@@ -70,7 +69,6 @@ export function NewPuppyForm({
                             name="trait"
                             type="text"
                             value={data.trait}
-                            required
                             onChange={(e) => setData('trait', e.target.value)}
                             className="max-w-96 rounded-sm bg-white px-2 py-1 ring ring-black/20 focus:ring-2 focus:ring-cyan-500 focus:outline-none"
                         />
@@ -87,7 +85,6 @@ export function NewPuppyForm({
                             id="image"
                             name="image"
                             type="file"
-                            required
                             onChange={(e) =>
                                 setData(
                                     'image',

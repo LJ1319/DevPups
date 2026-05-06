@@ -141,7 +141,7 @@ class PuppySeeder extends Seeder
         $optimizer = new OptimizeWebpImageAction;
 
         foreach ($puppies as $puppy) {
-            $input = storage_path('app/public/puppies/'.$puppy['image']);
+            $input = base_path('seed-images/'.$puppy['image']);
 
             $optimized = $optimizer->handle($input);
 
