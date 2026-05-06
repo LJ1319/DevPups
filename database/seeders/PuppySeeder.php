@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Actions\OptimizeWebpImageAction;
 use App\Models\Puppy;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -137,12 +138,22 @@ class PuppySeeder extends Seeder
 
         $user = User::first();
 
+        $optimizer = new OptimizeWebpImageAction;
+
         foreach ($puppies as $puppy) {
+            $input = storage_path('app/public/puppies/'.$puppy['image']);
+
+            $optimized = $optimizer->handle($input);
+
+            $path = 'puppies/'.$optimized['fileName'];
+
+            Storage::disk('public')->put($path, $optimized['webpString']);
+
             Puppy::create([
                 'user_id' => $user->id,
                 'name' => $puppy['name'],
                 'trait' => $puppy['trait'],
-                'image_url' => Storage::url('puppies/').$puppy['image'],
+                'image_url' => Storage::url($path),
             ]);
         }
     }
