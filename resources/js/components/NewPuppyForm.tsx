@@ -1,76 +1,116 @@
-import { useFormStatus } from 'react-dom';
-import { ErrorBoundary } from 'react-error-boundary';
-import { createPuppy } from '@/queries';
-import type { Puppy } from '@/types';
+import { useForm } from '@inertiajs/react';
+import type { RefObject } from 'react';
+import { useRef } from 'react';
+import { route } from 'ziggy-js';
 
-export function NewPuppyForm({ puppies }: { puppies: Puppy[] }) {
+export function NewPuppyForm({
+    mainRef,
+}: {
+    mainRef: RefObject<HTMLElement | null>;
+}) {
+    const { data, processing, errors, setData, post, reset } = useForm({
+        name: '',
+        trait: '',
+        image: null as File | null,
+    });
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    function handleCreate() {
+        post(route('puppies.store'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                reset();
+
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                }
+
+                if (mainRef?.current) {
+                    mainRef.current.scrollIntoView({
+                        block: 'start',
+                        behavior: 'smooth',
+                    });
+                }
+            },
+        });
+    }
+
     return (
         <div className="mt-12 flex items-center justify-between bg-white p-8 shadow ring ring-black/5">
-            <ErrorBoundary
-                fallbackRender={({ error }) => (
-                    <pre>{JSON.stringify(error, null, 2)}</pre>
-                )}
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    handleCreate();
+                }}
+                className="mt-4 flex w-full flex-col items-start gap-4"
             >
-                <form
-                    action={async (formData: FormData) => {
-                        const response = await createPuppy(formData);
-
-                        // if (response.data) {
-                        //     setPuppies([...puppies, response.data]);
-                        // }
-                    }}
-                    className="mt-4 flex w-full flex-col items-start gap-4"
+                <div className="grid w-full gap-6 md:grid-cols-3">
+                    <fieldset className="flex w-full flex-col gap-1">
+                        <label htmlFor="name">Name</label>
+                        <input
+                            id="name"
+                            name="name"
+                            type="text"
+                            value={data.name}
+                            required
+                            onChange={(e) => setData('name', e.target.value)}
+                            className="max-w-96 rounded-sm bg-white px-2 py-1 ring ring-black/20 focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+                        />
+                        {errors.name && (
+                            <p className="empty:1 text-xs text-red-500">
+                                {errors.name}
+                            </p>
+                        )}
+                    </fieldset>
+                    <fieldset className="flex w-full flex-col gap-1">
+                        <label htmlFor="trait">Personality trait</label>
+                        <input
+                            id="trait"
+                            name="trait"
+                            type="text"
+                            value={data.trait}
+                            required
+                            onChange={(e) => setData('trait', e.target.value)}
+                            className="max-w-96 rounded-sm bg-white px-2 py-1 ring ring-black/20 focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+                        />
+                        {errors.trait && (
+                            <p className="mt-1 text-xs text-red-500">
+                                {errors.name}
+                            </p>
+                        )}
+                    </fieldset>
+                    <fieldset className="col-span-2 flex w-full flex-col gap-1">
+                        <label htmlFor="image">Profile pic</label>
+                        <input
+                            ref={fileInputRef}
+                            id="image"
+                            name="image"
+                            type="file"
+                            required
+                            onChange={(e) =>
+                                setData(
+                                    'image',
+                                    e.target.files ? e.target.files[0] : null,
+                                )
+                            }
+                            className="max-w-96 rounded-sm bg-white px-2 py-1 ring ring-black/20 focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+                        />
+                        {errors.image && (
+                            <p className="mt-1 text-xs text-red-500">
+                                {errors.name}
+                            </p>
+                        )}
+                    </fieldset>
+                </div>
+                <button
+                    type="submit"
+                    disabled={processing}
+                    className="mt-4 inline-block rounded bg-cyan-300 px-4 py-2 font-medium text-cyan-900 hover:bg-cyan-200 focus:ring-2 focus:ring-cyan-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-slate-200"
                 >
-                    <div className="grid w-full gap-6 md:grid-cols-3">
-                        <fieldset className="flex w-full flex-col gap-1">
-                            <label htmlFor="name">Name</label>
-                            <input
-                                required
-                                className="max-w-96 rounded-sm bg-white px-2 py-1 ring ring-black/20 focus:ring-2 focus:ring-cyan-500 focus:outline-none"
-                                id="name"
-                                type="text"
-                                name="name"
-                            />
-                        </fieldset>
-                        <fieldset className="flex w-full flex-col gap-1">
-                            <label htmlFor="trait">Personality trait</label>
-                            <input
-                                required
-                                className="max-w-96 rounded-sm bg-white px-2 py-1 ring ring-black/20 focus:ring-2 focus:ring-cyan-500 focus:outline-none"
-                                id="trait"
-                                type="text"
-                                name="trait"
-                            />
-                        </fieldset>
-                        <fieldset className="col-span-2 flex w-full flex-col gap-1">
-                            <label htmlFor="image_url">Profile pic</label>
-                            <input
-                                className="max-w-96 rounded-sm bg-white px-2 py-1 ring ring-black/20 focus:ring-2 focus:ring-cyan-500 focus:outline-none"
-                                id="image_url"
-                                type="file"
-                                name="image_url"
-                            />
-                        </fieldset>
-                    </div>
-                    <SubmitButton />
-                </form>
-            </ErrorBoundary>
+                    {processing ? `Adding ${data.name} puppy...` : 'Add puppy'}
+                </button>
+            </form>
         </div>
-    );
-}
-
-function SubmitButton() {
-    const status = useFormStatus();
-
-    return (
-        <button
-            className="mt-4 inline-block rounded bg-cyan-300 px-4 py-2 font-medium text-cyan-900 hover:bg-cyan-200 focus:ring-2 focus:ring-cyan-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-slate-200"
-            type="submit"
-            disabled={status.pending}
-        >
-            {status.pending
-                ? `Adding ${status?.data?.get('name') || 'puppy'}...`
-                : 'Add puppy'}
-        </button>
     );
 }

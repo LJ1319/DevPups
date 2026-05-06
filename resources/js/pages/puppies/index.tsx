@@ -1,4 +1,5 @@
 import { usePage } from '@inertiajs/react';
+import { useRef } from 'react';
 import { Container } from '@/components/Container';
 import { Header } from '@/components/Header';
 import { NewPuppyForm } from '@/components/NewPuppyForm';
@@ -34,14 +35,16 @@ function Main({
 }) {
     const { auth } = usePage().props;
 
+    const mainRef = useRef<HTMLElement>(null);
+
     return (
-        <main>
+        <main ref={mainRef} className="scroll-mt-6">
             <div className="mt-24 grid gap-8 sm:grid-cols-2">
                 <Search filters={filters} />
                 {auth.user && <Shortlist puppies={puppies.data} />}
             </div>
             <PuppiesList puppies={puppies} />
-            <NewPuppyForm puppies={puppies.data} />
+            {auth.user && <NewPuppyForm mainRef={mainRef} />}
         </main>
     );
 }

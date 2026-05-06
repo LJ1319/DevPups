@@ -13,6 +13,7 @@ export function Shortlist({ puppies }: { puppies: Puppy[] }) {
         });
     }
 
+    // TODO: make sure all the liked puppies are showing, not just the ones form the current page!
     return (
         <div>
             <h2 className="flex items-center gap-2 font-medium">
