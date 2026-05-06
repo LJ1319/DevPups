@@ -7,8 +7,12 @@ use App\Models\Puppy;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
+use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\Format;
+use Intervention\Image\ImageManager;
 
 class PuppyController extends Controller
 {
@@ -50,9 +54,23 @@ class PuppyController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('puppies', 'public');
+            $manager = ImageManager::usingDriver(Driver::class);
 
-            if (! $path) {
+            $image = $manager->decodePath($request->image);
+
+            if ($image->width() > 1000) {
+                $image->scale(width: 1000);
+            }
+
+            $webpEncoded = $image->encodeUsingFormat(Format::WEBP, 95)->toString();
+
+            $fileName = Str::random().'.webp';
+
+            $path = 'puppies/'.$fileName;
+
+            $stored = Storage::disk('public')->put($path, $webpEncoded);
+
+            if (! $stored) {
                 return back()->withErrors(['image' => 'Failed to upload imag.']);
             }
 
