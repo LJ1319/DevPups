@@ -27,8 +27,16 @@ class PuppyController extends Controller
             ->paginate(9)
             ->withQueryString();
 
+        $likedPuppies = PuppyResource::collection(
+            $request->user()
+                ->likedPuppies()
+                ->orderByPivotDesc('created_at')
+                ->get()
+        );
+
         return Inertia::render('puppies/index', [
             'puppies' => PuppyResource::collection($puppies),
+            'likedPuppies' => $request->user() ? $likedPuppies : [],
             'filters' => [
                 'search' => $search,
             ],

@@ -25,9 +25,9 @@ class User extends Authenticatable
         return $this->hasMany(Puppy::class);
     }
 
-    public function likedBy(): BelongsToMany
+    public function likedPuppies(): BelongsToMany
     {
-        return $this->belongsToMany(Puppy::class);
+        return $this->belongsToMany(Puppy::class)->withTimestamps();
     }
 
     /**
