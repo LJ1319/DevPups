@@ -1,9 +1,9 @@
 import { useForm } from '@inertiajs/react';
-import { Trash } from 'lucide-react';
+import { LoaderCircle, Trash } from 'lucide-react';
+import { useState } from 'react';
 import { route } from 'ziggy-js';
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -13,9 +13,11 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import type { Puppy } from '@/types';
 
 export function PuppyDelete({ puppy }: { puppy: Puppy }) {
+    const [open, setOpen] = useState(false);
     const { processing, delete: destroy } = useForm();
 
     function handleDelete() {
@@ -26,17 +28,17 @@ export function PuppyDelete({ puppy }: { puppy: Puppy }) {
 
     return (
         <div>
-            <AlertDialog>
+            <AlertDialog open={open} onOpenChange={setOpen}>
                 <AlertDialogTrigger asChild>
                     <Button
                         size="icon"
-                        variant="destructive"
+                        variant="secondary"
                         aria-label="Delete puppy"
+                        className="group/delete bg-background/30 hover:bg-background"
                     >
-                        <Trash className="size-4" />
+                        <Trash className="size-4 group-hover/delete:stroke-destructive" />
                     </Button>
                 </AlertDialogTrigger>
-
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>
@@ -55,14 +57,20 @@ export function PuppyDelete({ puppy }: { puppy: Puppy }) {
                                 handleDelete();
                             }}
                         >
-                            <AlertDialogAction
+                            <Button
                                 type="submit"
                                 disabled={processing}
+                                className="relative disabled:opacity-100"
                             >
-                                {processing
-                                    ? `Deleting ${puppy.name}`
-                                    : `Delete ${puppy.name}`}
-                            </AlertDialogAction>
+                                {processing && (
+                                    <div className="absolute inset-0 grid place-items-center">
+                                        <LoaderCircle className="size-5 animate-spin stroke-primary-foreground" />
+                                    </div>
+                                )}
+                                <span className={cn(processing && 'invisible')}>
+                                    Delete {puppy.name}
+                                </span>
+                            </Button>
                         </form>
                     </AlertDialogFooter>
                 </AlertDialogContent>

@@ -11,7 +11,7 @@ export function PuppyCard({ puppy }: { puppy: Puppy }) {
             key={puppy.id}
             className="relative overflow-clip rounded-lg bg-white shadow-md ring ring-black/5 hover:-translate-y-0.5"
         >
-            {auth.user && (
+            {auth.user && puppy.can.delete && (
                 <div className="absolute top-2 right-2">
                     <PuppyDelete puppy={puppy} />
                 </div>

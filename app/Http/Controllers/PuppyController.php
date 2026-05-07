@@ -87,6 +87,10 @@ class PuppyController extends Controller
 
     public function destroy(Request $request, Puppy $puppy)
     {
+        if ($request->user()->cannot('delete', $puppy)) {
+            abort(403);
+        }
+
         $puppy->delete();
 
         $imagePath = str_replace('/storage/', '', $puppy->image_url);
