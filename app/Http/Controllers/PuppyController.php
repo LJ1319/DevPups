@@ -27,16 +27,16 @@ class PuppyController extends Controller
             ->paginate(9)
             ->withQueryString();
 
-        $likedPuppies = PuppyResource::collection(
+        $likedPuppies = $request->user() ? PuppyResource::collection(
             $request->user()
                 ->likedPuppies()
                 ->orderByPivotDesc('created_at')
                 ->get()
-        );
+        ) : [];
 
         return Inertia::render('puppies/index', [
             'puppies' => PuppyResource::collection($puppies),
-            'likedPuppies' => $request->user() ? $likedPuppies : [],
+            'likedPuppies' => $likedPuppies,
             'filters' => [
                 'search' => $search,
             ],
@@ -83,5 +83,20 @@ class PuppyController extends Controller
         return redirect()
             ->route('home', ['page' => 1])
             ->with('success', 'Puppy created successfully!');
+    }
+
+    public function destroy(Request $request, Puppy $puppy)
+    {
+        $puppy->delete();
+
+        $imagePath = str_replace('/storage/', '', $puppy->image_url);
+
+        if ($imagePath && Storage::disk('public')->exists($imagePath)) {
+            Storage::disk('public')->delete($imagePath);
+        }
+
+        return redirect()
+            ->route('home', ['page' => 1])
+            ->with('success', 'Puppy deleted successfully!');
     }
 }
