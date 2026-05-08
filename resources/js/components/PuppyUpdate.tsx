@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { EditIcon, LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import { route } from 'ziggy-js';
+import { ImageUploadPreview } from '@/components/IamgeUploadPreview';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -113,6 +114,10 @@ export function PuppyUpdate({ puppy }: { puppy: Puppy }) {
                                 {errors.image}
                             </p>
                         )}
+
+                        <ImageUploadPreview
+                            source={data.image ?? puppy.imageUrl}
+                        />
                     </fieldset>
 
                     <DialogFooter className="gap-2">

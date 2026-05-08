@@ -68,7 +68,7 @@ class PuppyController extends Controller
             $stored = Storage::disk('public')->put($path, $optimized['webpString']);
 
             if (! $stored) {
-                return back()->withErrors(['image' => 'Failed to upload imag.']);
+                return back()->withErrors(['image' => 'Failed to upload image.']);
             }
 
             $image_url = Storage::url($path);
@@ -120,6 +120,7 @@ class PuppyController extends Controller
             $oldImagePath = str_replace('/storage/', '', $puppy->image_url);
 
             $optimized = (new OptimizeWebpImageAction)->handle($request->file('image'));
+
             $path = 'puppies/'.$optimized['fileName'];
 
             $stored = Storage::disk('public')->put($path, $optimized['webpString']);
@@ -127,6 +128,7 @@ class PuppyController extends Controller
             if (! $stored) {
                 return back()->withErrors(['image' => 'Failed to upload image.']);
             }
+
             $puppy->image_url = Storage::url($path);
 
             if ($oldImagePath && Storage::disk('public')->exists($oldImagePath)) {
