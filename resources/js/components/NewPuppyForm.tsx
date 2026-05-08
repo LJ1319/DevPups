@@ -2,6 +2,7 @@ import { useForm } from '@inertiajs/react';
 import type { RefObject } from 'react';
 import { useRef } from 'react';
 import { route } from 'ziggy-js';
+import { ImageUploadPreview } from '@/components/IamgeUploadPreview';
 
 export function NewPuppyForm({
     mainRef,
@@ -98,6 +99,11 @@ export function NewPuppyForm({
                                 {errors.name}
                             </p>
                         )}
+                        <ImageUploadPreview
+                            height={96}
+                            className="self-start"
+                            source={data.image}
+                        />
                     </fieldset>
                 </div>
                 <button
