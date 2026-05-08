@@ -36,7 +36,7 @@ class PuppyPolicy
      */
     public function update(User $user, Puppy $puppy): bool
     {
-        return false;
+        return $user->is($puppy->user);
     }
 
     /**

@@ -22,6 +22,7 @@ class PuppyResource extends JsonResource
             'likedBy' => $this->whenLoaded('likedBy', fn () => $this->likedBy->pluck('id')),
             'user' => UserResource::make($this->whenLoaded('user')),
             'can' => [
+                'update' => $request->user()?->can('update', $this->resource) ?? false,
                 'delete' => $request->user()?->can('delete', $this->resource) ?? false,
             ],
         ];

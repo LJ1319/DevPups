@@ -1,5 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import { LikeToggle } from '@/components/LikeToggle';
+import { PuppyUpdate } from '@/components/PuppyUpdate';
 import type { Puppy } from '@/types';
 import { PuppyDelete } from './PuppyDelete';
 
@@ -11,9 +12,10 @@ export function PuppyCard({ puppy }: { puppy: Puppy }) {
             key={puppy.id}
             className="relative overflow-clip rounded-lg bg-white shadow-md ring ring-black/5 hover:-translate-y-0.5"
         >
-            {auth.user && puppy.can.delete && (
-                <div className="absolute top-2 right-2">
-                    <PuppyDelete puppy={puppy} />
+            {auth.user && (
+                <div className="absolute top-2 right-2 flex items-center gap-x-2">
+                    {puppy.can.update && <PuppyUpdate puppy={puppy} />}
+                    {puppy.can.delete && <PuppyDelete puppy={puppy} />}
                 </div>
             )}
             <img

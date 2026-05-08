@@ -12,6 +12,7 @@ export type Puppy = {
     user: Pick<User, 'id' | 'name'>;
     likedBy: User['id'][];
     can: {
+        update: boolean;
         delete: boolean;
     };
 };
